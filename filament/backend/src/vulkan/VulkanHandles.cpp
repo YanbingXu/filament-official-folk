@@ -537,8 +537,7 @@ bool VulkanTimerQuery::isCompleted() noexcept {
     if (!mFence) {
         return false;
     }
-    VkResult status = mFence->status.load(std::memory_order_relaxed);
-    if (status != VK_SUCCESS) {
+    if (mFence->getStatus() != VK_SUCCESS) {
         return false;
     }
 

@@ -129,13 +129,15 @@ constexpr inline VkImageLayout getVkLayout(VulkanLayout layout) {
         // layout transitions. So, keep it simple and use GENERAL for all color-attachable
         // textures.
         case VulkanLayout::COLOR_ATTACHMENT:
-            return VK_IMAGE_LAYOUT_GENERAL;
+            return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         case VulkanLayout::COLOR_ATTACHMENT_RESOLVE:
             return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
     }
 }
 
-void transitionLayout(VkCommandBuffer cmdbuffer, VulkanLayoutTransition transition);
+// Returns true if a transition has been added to the command buffer, false otherwis (where there is
+// no transition necessary).
+bool transitionLayout(VkCommandBuffer cmdbuffer, VulkanLayoutTransition transition);
 
 } // namespace imgutil
 

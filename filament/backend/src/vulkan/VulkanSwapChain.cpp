@@ -96,7 +96,7 @@ void VulkanSwapChain::update() {
 
 void VulkanSwapChain::present() {
     if (!mHeadless) {
-        VkCommandBuffer const cmdbuf = mCommands->get().buffer();
+        VulkanCommandBuffer& commands = mCommands->get();
         VkImageSubresourceRange const subresources{
                 .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
                 .baseMipLevel = 0,
@@ -104,7 +104,7 @@ void VulkanSwapChain::present() {
                 .baseArrayLayer = 0,
                 .layerCount = 1,
         };
-        mColors[mCurrentSwapIndex]->transitionLayout(cmdbuf, subresources, VulkanLayout::PRESENT);
+        mColors[mCurrentSwapIndex]->transitionLayout(&commands, subresources, VulkanLayout::PRESENT);
     }
     mCommands->flush();
 
@@ -139,8 +139,8 @@ void VulkanSwapChain::acquire(bool& resized) {
         update();
     }
 
-	mCurrentImageReadyIndex = (mCurrentImageReadyIndex + 1) % IMAGE_READY_SEMAPHORE_COUNT;
-	const VkSemaphore imageReady = mImageReady[mCurrentImageReadyIndex];
+    mCurrentImageReadyIndex = (mCurrentImageReadyIndex + 1) % IMAGE_READY_SEMAPHORE_COUNT;
+    const VkSemaphore imageReady = mImageReady[mCurrentImageReadyIndex];
     VkResult const result = mPlatform->acquire(swapChain, imageReady, &mCurrentSwapIndex);
     FILAMENT_CHECK_POSTCONDITION(result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
             << "Cannot acquire in swapchain.";
