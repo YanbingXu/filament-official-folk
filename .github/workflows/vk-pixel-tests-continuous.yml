@@ -1,0 +1,23 @@
+name: GL Pixel Presbumit
+
+on:
+  push:
+    branches:
+      - main
+      - release
+      - rc/**
+
+jobs:
+  run-gl-pixel-test:
+    name: run-gl-pixel-test
+    runs-on: ubuntu-22.04-32core
+
+    steps:
+      - uses: actions/checkout@v4.1.6
+      - name: Run build script
+        run: |
+          cd build/linux && printf "y" | ./build.sh continuous
+      - uses: actions/upload-artifact@v4
+        with:
+          name: filament-linux
+          path: out/filament-release-linux.tgz
